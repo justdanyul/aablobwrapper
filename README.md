@@ -12,10 +12,18 @@ pip install aablobwrapper
 ## Examples
 
 ```python
-import aablobwrapper
+import csv
+from aablobwrapper import SyncBlobAppender
 
+connection_string = "https://<storageaccount>.blob.core.windows.net/<container_name>"
+credential = "<key>"
+container_name = "<container_name>"
+blob_name = "<blobname>"
 
+appender = SyncBlobAppender(connection_string, credential, container_name, blob_name)
+csv_writer = csv.writer(appender)
+csv_writer.writerow(["write", "some", "data"])
 ```
-for more examples, for example, an async one, see the examples folder.
+for more examples, for example, to see how to use context managers or how to use the async version, see the examples folder.
 
 
