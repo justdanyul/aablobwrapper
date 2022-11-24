@@ -1,3 +1,6 @@
+from io import BytesIO, TextIOWrapper
+
+
 class AzureWriter:
     def __init__(self, account_url, credential, container_name, blob_name) -> None:
         from azure.storage.blob import BlobClient
@@ -53,3 +56,36 @@ class AzureWriterAIO:
     async def __aexit__(self, type, value, traceback):
         await self.close()
         return True
+
+
+class AzureBlobReader:
+    def __init__(
+        self, account_url, credential, container_name, blob_name, is_binary=False
+    ) -> None:
+        from azure.storage.blob import BlobClient
+
+        self.blob_client = BlobClient(
+            account_url=account_url,
+            credential=credential,
+            container_name=container_name,
+            blob_name=blob_name,
+        )
+        self.is_binary = is_binary
+
+    def __enter__(self):
+        self.in_memory = self.get_file_like_object(binary=self.is_binary)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.blob_client.close()
+        return True
+
+    def get_file_like_object(self, binary=False):
+        download_stream = self.blob_client.download_blob()
+
+        if binary:
+            in_memory = BytesIO(download_stream.content_as_bytes())
+        else:
+            in_memory = TextIOWrapper(BytesIO(download_stream.content_as_bytes()))
+
+        return in_memory
