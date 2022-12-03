@@ -7,7 +7,7 @@ container_name = "<container_name>"
 blob_name = "<blobname>"
 
 with SyncBlobAppender(
-    connection_string, credential, container_name, blob_name
+    connection_string, credential, container_name, blob_name, binary=False
 ) as appender:
     csv_writer = csv.writer(appender)
     csv_writer.writerow(["write", "some", "data"])

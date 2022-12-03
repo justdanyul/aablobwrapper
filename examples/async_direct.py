@@ -11,7 +11,7 @@ async def main():
     blob_name = "<blobname>"
 
     appender = AsyncBlobAppender(
-        connection_string, credential, container_name, blob_name
+        connection_string, credential, container_name, blob_name, binary=False
     )
 
     # ensure the blob exists. If you want to overwrite the existing blob, incase one
