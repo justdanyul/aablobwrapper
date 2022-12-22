@@ -2,7 +2,9 @@ from io import BytesIO, TextIOWrapper
 
 
 class AzureWriter:
-    def __init__(self, account_url, credential, container_name, blob_name,  binary=True) -> None:
+    def __init__(
+        self, account_url, credential, container_name, blob_name, binary=True
+    ) -> None:
         from azure.storage.blob import BlobClient
 
         self.blob_client = BlobClient(
@@ -14,15 +16,15 @@ class AzureWriter:
 
         if not self.blob_client.exists():
             self.blob_client.create_append_blob()
-        
+
         self.closed = False
         self.binary = binary
 
     def write(self, data) -> None:
         if self.binary:
-            append_data = memoryview(data)
+            append_data = bytes(memoryview(data))
         else:
-            append_data = bytes(data, "utf-8")        
+            append_data = bytes(data, "utf-8")
         self.blob_client.append_block(append_data, length=len(append_data))
 
     def close(self):
@@ -38,7 +40,9 @@ class AzureWriter:
 
 
 class AzureWriterAIO:
-    def __init__(self, account_url, credential, container_name, blob_name, binary=True) -> None:
+    def __init__(
+        self, account_url, credential, container_name, blob_name, binary=True
+    ) -> None:
         from azure.storage.blob.aio import BlobClient
 
         self.blob_client = BlobClient(
@@ -58,7 +62,7 @@ class AzureWriterAIO:
         if self.binary:
             append_data = memoryview(data)
         else:
-            append_data = bytes(data, "utf-8")        
+            append_data = bytes(data, "utf-8")
         await self.blob_client.append_block(append_data, length=len(append_data))
 
     async def close(self) -> None:
